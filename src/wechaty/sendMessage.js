@@ -11,7 +11,7 @@ import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
 export async function defaultMessage(msg, bot) {
   const contact = msg.talker() // 发消息人
   const receiver = msg.to() // 消息接收人
-  const content = msg.text() // 消息内容
+  let content = msg.text() // 消息内容
   const room = msg.room() // 是否是群消息
   const roomName = (await room?.topic()) || null // 群名称
   const alias = (await contact.alias()) || (await contact.name()) // 发消息人昵称
@@ -26,7 +26,21 @@ export async function defaultMessage(msg, bot) {
     try {
       // 区分群聊和私聊
       if (isRoom && room) {
-        await room.say(await getReply(content.replace(`${botName}`, '')))
+        // 处理引用
+        // "G.z: @Jarvis wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
+        const regex = /^.*"<br\/>- - - - - - - - - - - - - - -<br\/>(.*)$/;
+        if (regex.test(content)) {
+          const match = regex.exec(content);
+          content = match ? match[1] : content;
+        };
+
+        let text = content.replace(`@${botName}`, '').trim();
+        let reply = await getReply(text);
+        if (!reply) {
+          reply = `抱歉，无法回答您的问题: ${text}`
+        }
+
+        await room.say(`@${name} ${reply}`)
         return
       }
       // 私人聊天，白名单内的直接发送
@@ -34,6 +48,7 @@ export async function defaultMessage(msg, bot) {
         await contact.say(await getReply(content))
       }
     } catch (e) {
+      await room.say(`@${name} 抱歉，出现异常，请联系@G.z`);
       console.error(e)
     }
   }

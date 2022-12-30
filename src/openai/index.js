@@ -22,7 +22,9 @@ export async function getOpenAiReply(prompt) {
     stop: [' Human:', ' AI:'],
   })
 
-  const reply = markdownToText(response.data.choices[0].text)
+  let choices = response.data.choices || [];
+  let reply = choices[0].text;
+  // const reply = markdownToText(response.data.choices[0].text)
   console.log('🚀🚀🚀 / reply', reply)
   return reply
 }
