@@ -1,5 +1,5 @@
 // import { getChatGPTReply as getReply } from '../chatgpt/index.js'
-import { getOpenAiReply as getReply } from '../openai/index.js'
+import { getTextReply, getImageReply } from '../openai/index.js'
 import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
 
 /**
@@ -21,31 +21,59 @@ export async function defaultMessage(msg, bot) {
   const isRoom = roomWhiteList.includes(roomName) && content.includes(`${botName}`) // 是否在群聊白名单内并且艾特了机器人
   const isAlias = aliasWhiteList.includes(remarkName) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
+  let isImage = false;
   // TODO 你们可以根据自己的需求修改这里的逻辑
   if (isText && !isBotSelf) {
     try {
+      // 处理引用
+      // "G.z: @Jarvis wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
+      let regex = /^.*"<br\/>- - - - - - - - - - - - - - -<br\/>(.*)$/;
+      if (regex.test(content)) {
+        content = regex.exec(content)[1];
+      };
+
+      // 判断是否为图片
+      regex = /^##(.*)$/;
+      if (regex.test(content)) {
+        isImage = true;
+        content = regex.exec(content)[1];
+      }
+
+      content = content.replace(`@${botName}`, '').trim();
+
       // 区分群聊和私聊
       if (isRoom && room) {
-        // 处理引用
-        // "G.z: @Jarvis wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
-        const regex = /^.*"<br\/>- - - - - - - - - - - - - - -<br\/>(.*)$/;
-        if (regex.test(content)) {
-          const match = regex.exec(content);
-          content = match ? match[1] : content;
-        };
-
-        let text = content.replace(`@${botName}`, '').trim();
-        let reply = await getReply(text);
-        if (!reply) {
-          reply = `抱歉，无法回答您的问题: ${text}`
+        if (isImage) {
+          let reply = await getImageReply(content);
+          if (reply) {
+            await room.say(`@${name}`, {
+              file: reply,
+            }) 
+          } else {
+            await room.say(`抱歉，无法为您生成图片: ${content}`)
+          }
+        } else {
+          let reply = await getTextReply(content) || `抱歉，无法回答您的问题: ${content}`;
+          await room.say(`@${name} ${reply}`)
         }
-
-        await room.say(`@${name} ${reply}`)
+     
         return
       }
       // 私人聊天，白名单内的直接发送
       if (isAlias && !room) {
-        await contact.say(await getReply(content))
+        if (isImage) {
+          let reply = await getImageReply(content);
+          if (reply) {
+            await contact.say('', {
+              file: reply,
+            }) 
+          } else {
+            await contact.say(`抱歉，无法为您生成图片: ${content}`)
+          }
+        } else {
+          let reply = await getTextReply(content) || `抱歉，无法回答您的问题: ${text}`;
+          await contact.say(reply)
+        }
       }
     } catch (e) {
       await room.say(`@${name} 抱歉，出现异常，请联系@G.z`);

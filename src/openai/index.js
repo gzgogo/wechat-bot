@@ -9,7 +9,7 @@ const configuration = new Configuration({
 })
 const openai = new OpenAIApi(configuration)
 
-export async function getOpenAiReply(prompt) {
+export async function getTextReply(prompt) {
   console.log('🚀🚀🚀 / prompt', prompt)
   const response = await openai.createCompletion({
     model: 'text-davinci-003',
@@ -26,6 +26,23 @@ export async function getOpenAiReply(prompt) {
   let reply = choices[0].text;
   // const reply = markdownToText(response.data.choices[0].text)
   console.log('🚀🚀🚀 / reply', reply)
+  
+  return reply
+}
+
+export async function getImageReply(prompt) {
+  console.log('🚀🚀🚀 / prompt', prompt)
+  const response = await openai.createImage({
+    model: "image-alpha-001",
+    prompt,
+  });
+
+
+  console.log(response.data);
+
+  let reply = response.data.data[0];
+  console.log('🚀🚀🚀 / reply', reply)
+
   return reply
 }
 
