@@ -1,6 +1,12 @@
-import { WechatyBuilder, ScanStatus, log } from 'wechaty'
-import qrTerminal from 'qrcode-terminal'
-import { handleMessage, shardingMessage } from './handleMessage.js'
+import { WechatyBuilder, ScanStatus, log } from 'wechaty';
+import PuppetPadlocal from "wechaty-puppet-padlocal";
+import qrTerminal from 'qrcode-terminal';
+import dotenv from 'dotenv';
+import { handleMessage, shardingMessage } from './handleMessage.js';
+
+const env = dotenv.config().parsed // 环境参数
+
+
 // 扫码
 function onScan(qrcode, status) {
   if (status === ScanStatus.Waiting || status === ScanStatus.Timeout) {
@@ -50,13 +56,13 @@ async function onMessage(msg) {
 }
 
 // 初始化机器人
-export const bot = WechatyBuilder.build({
-  name: 'WechatEveryDay',
-  puppet: 'wechaty-puppet-wechat', // 如果有token，记得更换对应的puppet
-  puppetOptions: {
-    uos: true,
-  },
-})
+// PAD_LOCAL_TOKEN='puppet_padlocal_37a9741923944cf78d001d0fc8ae7b5c';
+const bot = WechatyBuilder.build({
+  name: 'wechat-jarvis',
+  puppet: new PuppetPadlocal({
+    token: env.PAD_LOCAL_TOKEN,
+  })
+});
 
 // 扫码
 bot.on('scan', onScan)
