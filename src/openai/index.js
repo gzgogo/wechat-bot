@@ -31,19 +31,24 @@ export async function getTextReply(prompt) {
 }
 
 export async function getImageReply(prompt) {
-  console.log('🚀🚀🚀 / prompt', prompt)
-  const response = await openai.createImage({
-    model: "image-alpha-001",
-    prompt,
-  });
+  try {
+    console.log('🚀🚀🚀 / prompt', prompt)
+    const response = await openai.createImage({
+      model: "image-alpha-001",
+      prompt,
+    });
+  
+    console.log(response.data);
+  
+    let reply = response.data.data[0].url;
+    console.log('🚀🚀🚀 / reply', reply)
+  
+    return reply
+  } catch (error) {
+    console.error(error);
+    return '';
+  }
 
-
-  console.log(response.data);
-
-  let reply = response.data.data[0];
-  console.log('🚀🚀🚀 / reply', reply)
-
-  return reply
 }
 
 function markdownToText(markdown) {
