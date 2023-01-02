@@ -52,6 +52,8 @@ export async function handleMessage(msg, bot) {
         content = regex.exec(content)[1];
       }
 
+      console.log(room ? `\n--- ${name} in ${roomName}:` : `\n--- ${name}:`);
+
       // 区分群聊和私聊
       if (isRoom && room) {
         if (isImage) {
