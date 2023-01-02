@@ -6,7 +6,6 @@ import { handleMessage, shardingMessage } from './handleMessage.js';
 
 const env = dotenv.config().parsed // 环境参数
 
-
 // 扫码
 function onScan(qrcode, status) {
   if (status === ScanStatus.Waiting || status === ScanStatus.Timeout) {
@@ -56,7 +55,6 @@ async function onMessage(msg) {
 }
 
 // 初始化机器人
-// PAD_LOCAL_TOKEN='puppet_padlocal_37a9741923944cf78d001d0fc8ae7b5c';
 const bot = WechatyBuilder.build({
   name: 'wechat-jarvis',
   puppet: new PuppetPadlocal({
