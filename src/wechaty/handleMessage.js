@@ -59,7 +59,7 @@ export async function handleMessage(msg, bot) {
         if (isImage) {
           let reply = await getImageReply(content);
           if (reply) {
-            await room.say(`"${content}"生成完毕，请稍后`, contact);
+            await room.say(`"${content}"生成成功，图片正缓缓向您飞来`, contact);
             await room.say(FileBox.fromUrl(reply));
           } else {
             await room.say(`抱歉，无法为您生成图片: ${content}`)
@@ -76,7 +76,7 @@ export async function handleMessage(msg, bot) {
         if (isImage) {
           let reply = await getImageReply(content);
           if (reply) {
-            await contact.say(`"${content}"生成完毕，请稍后`);
+            await contact.say(`"${content}"生成成功，图片正缓缓向您飞来`);
             await contact.say(FileBox.fromUrl(reply));
           } else {
             await contact.say(`抱歉，无法为您生成图片: ${content}`)

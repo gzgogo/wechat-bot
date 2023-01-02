@@ -38,7 +38,7 @@ export async function getImageReply(prompt) {
       prompt,
     });
   
-    console.log(response.data);
+    // console.log(response.data);
   
     let reply = response.data.data[0].url;
     console.log('🚀🚀🚀 / reply', reply)
