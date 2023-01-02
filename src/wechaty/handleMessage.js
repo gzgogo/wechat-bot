@@ -76,9 +76,8 @@ export async function handleMessage(msg, bot) {
         if (isImage) {
           let reply = await getImageReply(content);
           if (reply) {
-            await contact.say('', {
-              file: reply,
-            }) 
+            await contact.say(`"${content}"生成完毕，请稍后`);
+            await contact.say(FileBox.fromUrl(reply));
           } else {
             await contact.say(`抱歉，无法为您生成图片: ${content}`)
           }
@@ -88,7 +87,7 @@ export async function handleMessage(msg, bot) {
         }
       }
     } catch (e) {
-      await contact.say(`@${name} 抱歉，出现异常，请稍后再试或联系@G.z`);
+      await contact.say(`抱歉，出现异常，请稍后再试或联系@G.z(wx:459135899)`);
       console.error(e)
     }
   }
