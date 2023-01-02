@@ -23,6 +23,9 @@ export async function handleMessage(msg, bot) {
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
   let isImage = false;
   let quote = '';
+
+  console.log(roomName, isRoom);
+  
   // TODO 你们可以根据自己的需求修改这里的逻辑
   if (isText && !isBotSelf) {
     try {
