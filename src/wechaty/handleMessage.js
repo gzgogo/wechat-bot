@@ -88,7 +88,7 @@ export async function handleMessage(msg, bot) {
         }
       }
     } catch (e) {
-      await room.say(`@${name} 抱歉，出现异常，请稍后再试或联系@G.z`);
+      await contact.say(`@${name} 抱歉，出现异常，请稍后再试或联系@G.z`);
       console.error(e)
     }
   }
