@@ -82,6 +82,10 @@ bot.on('logout', onLogout)
 bot.on('message', onMessage)
 // 添加好友
 bot.on('friendship', onFriendShip)
+// 有人加入群时
+bot.on('room-join', (room, inviteeList, inviter) => {
+  inviteeList.forEach(async c => await room.say('欢迎加入体验群，使用方法请看群公告', c));
+})
 // 发生错误
 bot.on('error', (error) => {
   console.error(error)

@@ -92,7 +92,23 @@ export async function handleMessage(msg, bot) {
             await contact.say(`抱歉，无法为您生成图片: ${content}`)
           }
         } else {
-          let reply = await getTextReply(content) || `抱歉，无法回答您的问题: ${text}`;
+          if (content === 'new') {
+            quoteMap[alias] = '';
+            await contact.say('上下文已清空，开始新的对话');
+            return;
+          }
+
+          if (quoteMap[alias]) {
+            content = `${quoteMap[alias]} \n${content}`;
+          }
+
+          let reply = await getTextReply(content);
+          if (reply) {
+            quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
+          } else {
+            reply = `抱歉，无法回答您的问题: ${text}`;
+          }
+          
           await contact.say(reply)
         }
       }

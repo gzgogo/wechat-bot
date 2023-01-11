@@ -19,7 +19,7 @@ export async function getTextReply(prompt) {
       model: 'text-davinci-003',
       prompt: prompt,
       temperature: 0.9, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）
-      max_tokens: 10000,
+      max_tokens: 4000,
       top_p: 1,
       frequency_penalty: 0.0,
       presence_penalty: 0.6,
@@ -34,7 +34,7 @@ export async function getTextReply(prompt) {
     reply.replace('<br />', '\n');
 
     // 去掉开头的非字符内容
-    reply = /^[\s,?!*#.。，？！]*(.+)/.exec(reply)[1]
+    reply = /^[\s,?!*#.。，？！、]*([\s\S]+)/.exec(reply)[1]
 
     // const reply = markdownToText(response.data.choices[0].text)
     console.log('🚀🚀🚀 / reply: ', reply)
