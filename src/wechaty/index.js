@@ -1,6 +1,11 @@
-import { WechatyBuilder, ScanStatus, log } from 'wechaty'
-import qrTerminal from 'qrcode-terminal'
-import { handleMessage, shardingMessage } from './handleMessage.js'
+import { WechatyBuilder, ScanStatus, log } from 'wechaty';
+import PuppetPadlocal from "wechaty-puppet-padlocal";
+import qrTerminal from 'qrcode-terminal';
+import dotenv from 'dotenv';
+import { handleMessage, shardingMessage } from './handleMessage.js';
+
+const env = dotenv.config().parsed // 环境参数
+
 // 扫码
 function onScan(qrcode, status) {
   if (status === ScanStatus.Waiting || status === ScanStatus.Timeout) {
@@ -50,9 +55,18 @@ async function onMessage(msg) {
 }
 
 // 初始化机器人
+// // 使用pad协议
+// const bot = WechatyBuilder.build({
+//   name: 'wechat-jarvis',
+//   puppet: new PuppetPadlocal({
+//     token: env.PAD_LOCAL_TOKEN,
+//   })
+// });
+// 使用web协议
+// 初始化机器人
 export const bot = WechatyBuilder.build({
   name: 'WechatEveryDay',
-  puppet: 'wechaty-puppet-wechat', // 如果有token，记得更换对应的puppet
+  puppet: 'wechaty-puppet-wechat',
   puppetOptions: {
     uos: true,
   },
@@ -68,6 +82,14 @@ bot.on('logout', onLogout)
 bot.on('message', onMessage)
 // 添加好友
 bot.on('friendship', onFriendShip)
+// 有人加入群时
+bot.on('room-join', (room, inviteeList, inviter) => {
+  inviteeList.forEach(async c => await room.say('欢迎加入体验群，使用方法请看群公告', c));
+})
+// 发生错误
+bot.on('error', (error) => {
+  console.error(error)
+})
 
 // 启动微信机器人
 bot

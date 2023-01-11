@@ -10,38 +10,54 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration)
 
 export async function getTextReply(prompt) {
-  console.log('🚀🚀🚀 / prompt', prompt)
-  const response = await openai.createCompletion({
-    model: 'text-davinci-003',
-    prompt: prompt,
-    temperature: 0.9, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）
-    max_tokens: 4000,
-    top_p: 1,
-    frequency_penalty: 0.0,
-    presence_penalty: 0.6,
-    stop: [' Human:', ' AI:'],
-  })
+  let reply = '';
 
-  let choices = response.data.choices || [];
-  let reply = choices[0].text;
-  // const reply = markdownToText(response.data.choices[0].text)
-  console.log('🚀🚀🚀 / reply', reply)
+  try {
+    console.log('🚀🚀🚀 / prompt: ', prompt)
+
+    const response = await openai.createCompletion({
+      model: 'text-davinci-003',
+      prompt: prompt,
+      temperature: 0.9, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）
+      max_tokens: 4000,
+      top_p: 1,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.6,
+      stop: [' Human:', ' AI:'],
+    })
+  
+    let choices = response.data.choices || [];
+    reply = choices[0].text || '';
+
+    // <br/>统一换成\n
+    reply.replace('<br/>', '\n');
+    reply.replace('<br />', '\n');
+
+    // 去掉开头的非字符内容
+    reply = /^[\s,?!*#.。，？！、]*([\s\S]+)/.exec(reply)[1]
+
+    // const reply = markdownToText(response.data.choices[0].text)
+    console.log('🚀🚀🚀 / reply: ', reply)
+  } catch (error) {
+    reply = `Error(${error.response.status}): ${error.response.statusText}` || '';
+    console.error(error);
+  }
   
   return reply
 }
 
 export async function getImageReply(prompt) {
   try {
-    console.log('🚀🚀🚀 / prompt', prompt)
+    console.log('🚀🚀🚀 / prompt: ', prompt)
     const response = await openai.createImage({
       model: "image-alpha-001",
       prompt,
     });
   
-    console.log(response.data);
+    // console.log(response.data);
   
     let reply = response.data.data[0].url;
-    console.log('🚀🚀🚀 / reply', reply)
+    console.log('🚀🚀🚀 / reply: ', reply)
   
     return reply
   } catch (error) {

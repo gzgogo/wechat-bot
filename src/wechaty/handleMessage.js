@@ -2,6 +2,8 @@ import { FileBox }  from 'file-box'
 import { getTextReply, getImageReply } from '../openai/index.js'
 import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
 
+const quoteMap = {};
+
 /**
  * 默认消息发送
  * @param msg
@@ -23,13 +25,13 @@ export async function handleMessage(msg, bot) {
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
   let isImage = false;
   let quote = '';
+
   // TODO 你们可以根据自己的需求修改这里的逻辑
   if (isText && !isBotSelf) {
     try {
-      // 去掉@部分
-      content = content.replace(`@${botName}`, '').trim();
-
-      // 处理引用
+      /* 注意处理content的顺序不能修改！！！！！ */
+      
+      // 1. 处理引用
       // "G.z: @Jarvis wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
       // '"Jarvis: @G.z <br/><br/>春初登山攀，新年怀抱期待。"<br/>- - - - - - - - - - - - - - -<br/>简短点'
       let regex = /^.*"<br\/>- - - - - - - - - - - - - - -<br\/>(.*)$/;
@@ -44,7 +46,7 @@ export async function handleMessage(msg, bot) {
         content = regex.exec(content)[1];
       };
 
-      // 判断是否为图片
+      // 2. 判断是否要求返回图片
       regex = /^\*\*(.*)$/;
       if (regex.test(content)) {
         isImage = true;
@@ -53,10 +55,19 @@ export async function handleMessage(msg, bot) {
 
       // 区分群聊和私聊
       if (isRoom && room) {
+        console.log(`\n--- ${name} in ${roomName}`);
+
+        // 去掉@部分
+        content = content.replace(`@${botName}`, '').trim();
+
+        if (quote) {
+          content = `${quote} \n${content}`;
+        }
+
         if (isImage) {
           let reply = await getImageReply(content);
           if (reply) {
-            await room.say(`"${content}"生成完毕，请稍后`, contact);
+            await room.say(`"${content}"生成成功，图片正缓缓向您飞来`, contact);
             await room.say(FileBox.fromUrl(reply));
           } else {
             await room.say(`抱歉，无法为您生成图片: ${content}`)
@@ -70,22 +81,39 @@ export async function handleMessage(msg, bot) {
       }
       // 私人聊天，白名单内的直接发送
       if (isAlias && !room) {
+        console.log(`\n--- ${name}:`);
+        
         if (isImage) {
           let reply = await getImageReply(content);
           if (reply) {
-            await contact.say('', {
-              file: reply,
-            }) 
+            await contact.say(`"${content}"生成成功，图片正缓缓向您飞来`);
+            await contact.say(FileBox.fromUrl(reply));
           } else {
             await contact.say(`抱歉，无法为您生成图片: ${content}`)
           }
         } else {
-          let reply = await getTextReply(content) || `抱歉，无法回答您的问题: ${text}`;
+          if (content === 'new') {
+            quoteMap[alias] = '';
+            await contact.say('上下文已清空，开始新的对话');
+            return;
+          }
+
+          if (quoteMap[alias]) {
+            content = `${quoteMap[alias]} \n${content}`;
+          }
+
+          let reply = await getTextReply(content);
+          if (reply) {
+            quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
+          } else {
+            reply = `抱歉，无法回答您的问题: ${text}`;
+          }
+          
           await contact.say(reply)
         }
       }
     } catch (e) {
-      await room.say(`@${name} 抱歉，出现异常，请稍后再试或联系@G.z`);
+      await contact.say(`抱歉，出现异常，请稍后再试或联系@G.z(wx:459135899)`);
       console.error(e)
     }
   }
