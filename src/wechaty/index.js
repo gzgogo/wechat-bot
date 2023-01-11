@@ -55,12 +55,22 @@ async function onMessage(msg) {
 }
 
 // 初始化机器人
-const bot = WechatyBuilder.build({
-  name: 'wechat-jarvis',
-  puppet: new PuppetPadlocal({
-    token: env.PAD_LOCAL_TOKEN,
-  })
-});
+// // 使用pad协议
+// const bot = WechatyBuilder.build({
+//   name: 'wechat-jarvis',
+//   puppet: new PuppetPadlocal({
+//     token: env.PAD_LOCAL_TOKEN,
+//   })
+// });
+// 使用web协议
+// 初始化机器人
+export const bot = WechatyBuilder.build({
+  name: 'WechatEveryDay',
+  puppet: 'wechaty-puppet-wechat',
+  puppetOptions: {
+    uos: true,
+  },
+})
 
 // 扫码
 bot.on('scan', onScan)
@@ -72,6 +82,10 @@ bot.on('logout', onLogout)
 bot.on('message', onMessage)
 // 添加好友
 bot.on('friendship', onFriendShip)
+// 发生错误
+bot.on('error', (error) => {
+  console.error(error)
+})
 
 // 启动微信机器人
 bot

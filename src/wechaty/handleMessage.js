@@ -2,6 +2,8 @@ import { FileBox }  from 'file-box'
 import { getTextReply, getImageReply } from '../openai/index.js'
 import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
 
+const quoteMap = {};
+
 /**
  * 默认消息发送
  * @param msg
@@ -27,10 +29,9 @@ export async function handleMessage(msg, bot) {
   // TODO 你们可以根据自己的需求修改这里的逻辑
   if (isText && !isBotSelf) {
     try {
-      // 去掉@部分
-      content = content.replace(`@${botName}`, '').trim();
-
-      // 处理引用
+      /* 注意处理content的顺序不能修改！！！！！ */
+      
+      // 1. 处理引用
       // "G.z: @Jarvis wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
       // '"Jarvis: @G.z <br/><br/>春初登山攀，新年怀抱期待。"<br/>- - - - - - - - - - - - - - -<br/>简短点'
       let regex = /^.*"<br\/>- - - - - - - - - - - - - - -<br\/>(.*)$/;
@@ -45,17 +46,24 @@ export async function handleMessage(msg, bot) {
         content = regex.exec(content)[1];
       };
 
-      // 判断是否为图片
+      // 2. 判断是否要求返回图片
       regex = /^\*\*(.*)$/;
       if (regex.test(content)) {
         isImage = true;
         content = regex.exec(content)[1];
       }
 
-      console.log(room ? `\n--- ${name} in ${roomName}:` : `\n--- ${name}:`);
-
       // 区分群聊和私聊
       if (isRoom && room) {
+        console.log(`\n--- ${name} in ${roomName}`);
+
+        // 去掉@部分
+        content = content.replace(`@${botName}`, '').trim();
+
+        if (quote) {
+          content = `${quote} \n${content}`;
+        }
+
         if (isImage) {
           let reply = await getImageReply(content);
           if (reply) {
@@ -73,6 +81,8 @@ export async function handleMessage(msg, bot) {
       }
       // 私人聊天，白名单内的直接发送
       if (isAlias && !room) {
+        console.log(`\n--- ${name}:`);
+        
         if (isImage) {
           let reply = await getImageReply(content);
           if (reply) {

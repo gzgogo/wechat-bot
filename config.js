@@ -2,7 +2,7 @@
 export const botName = 'Jarvis'
 
 // 群聊白名单，白名单内的群聊才会自动回复
-export const roomWhiteList = ['一顿狂式杵', '🎈都是高中惹的祸', '周一吃个饭', 'OpenAI-Group', '中老年活动中心', 'OpenAI-Inc', ]
+export const roomWhiteList = ['一顿狂式杵', '🎈都是高中惹的祸', '周一吃个饭', 'OpenAI-Group', '中老年活动中心', 'OpenAI-Inc', 'OpenAI-Beta', 'OpenAI-']
 
 // 联系人白名单，白名单内的联系人才会自动回复
-export const aliasWhiteList = ['G.z', 'Rella肉肉', 'ws']
+export const aliasWhiteList = ['G.z', 'Rella肉肉', 'ws', 'kedalgx', '喝水天天', '李广新']
