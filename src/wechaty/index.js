@@ -55,22 +55,22 @@ async function onMessage(msg) {
 }
 
 // 初始化机器人
-// // 使用pad协议
-// const bot = WechatyBuilder.build({
+// 使用pad协议
+const bot = WechatyBuilder.build({
+  name: 'wechat-jarvis',
+  puppet: new PuppetPadlocal({
+    token: env.PAD_LOCAL_TOKEN,
+  })
+});
+
+// // 使用web协议
+// export const bot = WechatyBuilder.build({
 //   name: 'wechat-jarvis',
-//   puppet: new PuppetPadlocal({
-//     token: env.PAD_LOCAL_TOKEN,
-//   })
-// });
-// 使用web协议
-// 初始化机器人
-export const bot = WechatyBuilder.build({
-  name: 'WechatEveryDay',
-  puppet: 'wechaty-puppet-wechat',
-  puppetOptions: {
-    uos: true,
-  },
-})
+//   puppet: 'wechaty-puppet-wechat',
+//   puppetOptions: {
+//     uos: true,
+//   },
+// })
 
 // 扫码
 bot.on('scan', onScan)

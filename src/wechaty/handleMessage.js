@@ -20,8 +20,8 @@ export async function handleMessage(msg, bot) {
   const remarkName = await contact.alias() // 备注名称
   const name = await contact.name() // 微信名称
   const isText = msg.type() === bot.Message.Type.Text // 消息类型是否为文本
-  const isRoom = (roomWhiteList.includes(roomName) || roomName.startsWith('OpenAI-')) && content.includes(`${botName}`) // 是否在群聊白名单内并且艾特了机器人
-  const isAlias = aliasWhiteList.includes(remarkName) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
+  const isRoom = roomName && (roomWhiteList.includes(roomName) || roomName.startsWith('OpenAI-')) // 是否在群聊白名单内
+  const isAlias = (remarkName && aliasWhiteList.includes(remarkName)) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
   let isImage = false;
   let quote = '';
@@ -32,37 +32,52 @@ export async function handleMessage(msg, bot) {
       /* 注意处理content的顺序不能修改！！！！！ */
       
       // 1. 处理引用
+      // 群和私聊的引用格式不一样，需要分开处理
+      // 群聊格式：
+      // 群聊时要区分@机器人和其他普通用户，所以要用两个正则
       // "G.z: @Jarvis wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
       // '"Jarvis: @G.z <br/><br/>春初登山攀，新年怀抱期待。"<br/>- - - - - - - - - - - - - - -<br/>简短点'
-      let regex = /^.*"<br\/>- - - - - - - - - - - - - - -<br\/>(.*)$/;
-      if (regex.test(content)) {
-        let botRegex = /^"Jarvis: @\S+ (.*)"<br\/>- - - - - - - - - - - - - - -<br\/>(.*)$/;
-        if (botRegex.test(content)) {
-          let quoteMatch = botRegex.exec(content);
+      // 私聊格式：
+      // '「Jarvis：叫张欣？」\n- - - - - - - - - - - - - - -\n是的'
+      if (isRoom) {
+        let quoteRegex = /^「[\s\S]*」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/;
+        if (quoteRegex.test(content)) {
+          let botQuoteRegex = /^「Jarvis：@.* ([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/;
+          if (botQuoteRegex.test(content)) {
+            let quoteMatch = botQuoteRegex.exec(content);
+            quote = quoteMatch[1];
+          }
+          
+          // 务必在获取quote之后执行，否则content内容被修改导致quote获取失败
+          content = quoteRegex.exec(content)[1];
+        };
+      } else if (isAlias) {
+        let quoteRegex = /^「Jarvis：([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/;
+        if (quoteRegex.test(content)) {
+          let quoteMatch = quoteRegex.exec(content);
           quote = quoteMatch[1];
-        }
-        
-        // 务必在获取quote之后执行，否则content内容被修改导致quote获取失败
-        content = regex.exec(content)[1];
-      };
+          content = quoteMatch[2];
+        };
+      }
 
       // 2. 判断是否要求返回图片
-      regex = /^\*\*(.*)$/;
+      let regex = /^\*\*(.*)$/;
       if (regex.test(content)) {
         isImage = true;
         content = regex.exec(content)[1];
       }
 
+      if (quote) {
+        content = `${quote} \n${content}`;
+      }
+
       // 区分群聊和私聊
-      if (isRoom && room) {
+      // 群聊内引用时不需要@机器人，否则必须@机器人
+      if (isRoom && room && (quote || content.includes(`${botName}`))) {
         console.log(`\n--- ${name} in ${roomName}`);
 
         // 去掉@部分
         content = content.replace(`@${botName}`, '').trim();
-
-        if (quote) {
-          content = `${quote} \n${content}`;
-        }
 
         if (isImage) {
           let reply = await getImageReply(content);
@@ -92,19 +107,19 @@ export async function handleMessage(msg, bot) {
             await contact.say(`抱歉，无法为您生成图片: ${content}`)
           }
         } else {
-          if (content === 'new') {
-            quoteMap[alias] = '';
-            await contact.say('上下文已清空，开始新的对话');
-            return;
-          }
+          // if (content === 'new') {
+          //   quoteMap[alias] = '';
+          //   await contact.say('上下文已清空，开始新的对话');
+          //   return;
+          // }
 
-          if (quoteMap[alias]) {
-            content = `${quoteMap[alias]} \n${content}`;
-          }
+          // if (quoteMap[alias]) {
+          //   content = `${quoteMap[alias]} \n${content}`;
+          // }
 
           let reply = await getTextReply(content);
           if (reply) {
-            quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
+            // quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
           } else {
             reply = `抱歉，无法回答您的问题: ${text}`;
           }
