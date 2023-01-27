@@ -18,9 +18,9 @@ export async function getTextReply(prompt) {
     const response = await openai.createCompletion({
       model: 'text-davinci-003',
       prompt: prompt,
-      temperature: 0.9, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）
-      max_tokens: 4000,
+      temperature: 0.7, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）0.9  
       top_p: 1,
+      max_tokens: 4000,
       frequency_penalty: 0.0,
       presence_penalty: 0.6,
       stop: [' Human:', ' AI:'],

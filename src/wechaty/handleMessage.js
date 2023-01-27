@@ -21,7 +21,8 @@ export async function handleMessage(msg, bot) {
   const name = await contact.name() // 微信名称
   const isText = msg.type() === bot.Message.Type.Text // 消息类型是否为文本
   const isRoom = roomName && (roomWhiteList.includes(roomName) || roomName.startsWith('OpenAI-') || roomName.startsWith('深夜')) // 是否在群聊白名单内
-  const isAlias = (remarkName && aliasWhiteList.includes(remarkName)) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
+  // const isAlias = (remarkName && aliasWhiteList.includes(remarkName)) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
+  const isAlias = remarkName // 取消私聊白名单的限制
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
   let isImage = false;
   let quote = '';
@@ -61,10 +62,10 @@ export async function handleMessage(msg, bot) {
       }
 
       // 2. 判断是否要求返回图片
-      let regex = /^\*\*(.*)$/;
+      let regex = /^(@(\S*-)?Jarvis\s)?\*\*(.*)$/;
       if (regex.test(content)) {
         isImage = true;
-        content = regex.exec(content)[1];
+        content = regex.exec(content)[3];
       }
 
       if (quote) {
@@ -73,15 +74,10 @@ export async function handleMessage(msg, bot) {
 
       // 区分群聊和私聊
       // 群聊内引用时不需要@机器人，否则必须@机器人
-      if (isRoom && room && (quote || content.includes(`@${botName}`) || content.includes(`@AI-${botName}`))) {
-        console.log(`\n--- ${name} in ${roomName}`);
-
-        // 去掉@部分
-        content = content.replace(`@AI-${botName}`, '')
-        content = content.replace(`@${botName}`, '');
-        content = content.trim();
-
+      if (isRoom && room) {
         if (isImage) {
+          console.log(`\n--- ${name} in ${roomName} (image)`);
+
           let reply = await getImageReply(content);
           if (reply) {
             await room.say(`"${content}"生成成功，图片正缓缓向您飞来`, contact);
@@ -89,7 +85,14 @@ export async function handleMessage(msg, bot) {
           } else {
             await room.say(`抱歉，无法为您生成图片: ${content}`)
           }
-        } else {
+        } else if (quote || content.includes(`@${botName}`) || content.includes(`@AI-${botName}`)) {
+          console.log(`\n--- ${name} in ${roomName} (text)`);
+
+          // 去掉@部分
+          content = content.replace(`@AI-${botName}`, '')
+          content = content.replace(`@${botName}`, '');
+          content = content.trim();
+
           let reply = await getTextReply(content) || `抱歉，无法回答您的问题: ${content}`;
           await room.say(reply, contact)
         }
