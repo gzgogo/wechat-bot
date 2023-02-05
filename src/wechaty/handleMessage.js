@@ -21,8 +21,8 @@ export async function handleMessage(msg, bot) {
   const name = await contact.name() // 微信名称
   const isText = msg.type() === bot.Message.Type.Text // 消息类型是否为文本
   const isRoom = roomName && (roomWhiteList.includes(roomName) || roomName.startsWith('OpenAI-') || roomName.startsWith('深夜')) // 是否在群聊白名单内
-  // const isAlias = (remarkName && aliasWhiteList.includes(remarkName)) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
-  const isAlias = true; // 取消私聊白名单的限制
+  const isAlias = (remarkName && aliasWhiteList.includes(remarkName)) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
+  // const isAlias = true; // 取消私聊白名单的限制
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
   let isImage = false;
   let quote = '';
