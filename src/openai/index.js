@@ -40,6 +40,7 @@ export async function getTextReply(prompt) {
     console.log('🚀🚀🚀 / reply: ', reply)
   } catch (error) {
     reply = `Error(${error.response.status}): ${error.response.statusText}` || '';
+    console.log(error.response.data.error.message);
     console.error(error);
   }
   
