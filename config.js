@@ -15,4 +15,4 @@ export const roomWhiteList = [
 ];
 
 // 联系人白名单，白名单内的联系人才会自动回复
-export const aliasWhiteList = ['G.z', 'Rella肉肉', 'ws', '喝水天天', '李广新', '吴博'];
+export const aliasWhiteList = ['G.z', 'Rella肉肉', 'ws', '喝水天天', '李广新', '吴博', '白玛', '👻 朱江浩（豆爸／TT）🎉'];
