@@ -54,14 +54,23 @@ async function onMessage(msg) {
   // await shardingMessage(msg,bot)
 }
 
-// 初始化机器人
-// 使用pad协议
+// 使用企业微信
 const bot = WechatyBuilder.build({
-  name: 'wechat-jarvis',
-  puppet: new PuppetPadlocal({
+  name: 'wxwork-jarvis',
+  puppet: 'wechaty-puppet-service', // WorkPro 是一种 puppet-service ，因此这里应该填写 'wechaty-puppet-service' 而不是 'wechaty-puppet-workpro'
+  puppetOptions: {
+    // tls: { disable: true },
     token: env.PAD_LOCAL_TOKEN,
-  })
-});
+  }
+})
+
+// // 使用pad协议
+// const bot = WechatyBuilder.build({
+//   name: 'wechat-jarvis',
+//   puppet: new PuppetPadlocal({
+//     token: env.PAD_LOCAL_TOKEN,
+//   })
+// });
 
 // // 使用web协议
 // export const bot = WechatyBuilder.build({
