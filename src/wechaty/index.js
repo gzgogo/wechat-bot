@@ -60,7 +60,7 @@ const bot = WechatyBuilder.build({
   puppet: 'wechaty-puppet-service', // WorkPro 是一种 puppet-service ，因此这里应该填写 'wechaty-puppet-service' 而不是 'wechaty-puppet-workpro'
   puppetOptions: {
     // tls: { disable: true },
-    token: env.PAD_LOCAL_TOKEN,
+    token: env.WORK_LOCAL_TOKEN,
   }
 })
 

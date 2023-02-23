@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node ./index.js"
+    "dev": "export WECHATY_PUPPET_SERVICE_NO_TLS_INSECURE_CLIENT=true && export WECHATY_PUPPET_SERVICE_AUTHORITY=token-service-discovery-test.juzibot.com && node ./index.js"
   },
   "author": "rongding",
   "license": "ISC",

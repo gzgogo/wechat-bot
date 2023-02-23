@@ -9,11 +9,10 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Node",
-      "runtimeExecutable": "/usr/local/bin/node",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "program": "${workspaceFolder}/index.js"
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script", "dev"
+      ]
     }
   ]
 }
