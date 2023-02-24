@@ -1,5 +1,6 @@
 import { WechatyBuilder, ScanStatus, log } from 'wechaty';
 import PuppetPadlocal from "wechaty-puppet-padlocal";
+import { FileBox }  from 'file-box';
 import qrTerminal from 'qrcode-terminal';
 import dotenv from 'dotenv';
 import { handleMessage, shardingMessage } from './handleMessage.js';
@@ -93,7 +94,10 @@ bot.on('message', onMessage)
 bot.on('friendship', onFriendShip)
 // 有人加入群时
 bot.on('room-join', (room, inviteeList, inviter) => {
-  inviteeList.forEach(async c => await room.say('欢迎加入体验群，使用方法请看群公告', c));
+  inviteeList.forEach(async c => {
+    await room.say('欢迎加入体验群，使用方法请看群公告。为避免失联，请加公众号：jarvis-ai-qy', c)
+    await room.say(FileBox.fromUrl('https://i.328888.xyz/2023/02/24/7Mrkk.md.jpeg'));
+  });
 })
 // 发生错误
 bot.on('error', (error) => {
