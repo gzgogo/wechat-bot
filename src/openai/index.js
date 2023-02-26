@@ -20,7 +20,7 @@ export async function getTextReply(prompt) {
       prompt: prompt,
       temperature: 0.7, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）0.9  
       top_p: 1,
-      max_tokens: 2000, // 回复字数限制，越大越慢
+      max_tokens: 1000, // 回复字数限制，越大越慢
       frequency_penalty: 0.0, // 控制主题的重复度[-2.0, 2.0]
       presence_penalty: 0.0, // 控制主题的重复度[-2.0, 2.0] 正值会增加新话题的产生机率 default: 0.6
       // stop: [' Human:', ' AI:'],
