@@ -16,7 +16,7 @@ export async function getTextReply(prompt) {
     console.log('🚀🚀🚀 / prompt: ', prompt)
 
     const response = await openai.createCompletion({
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo', // 'text-davinci-003',
       prompt: prompt,
       temperature: 0.7, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）0.9  
       top_p: 1,
@@ -39,8 +39,8 @@ export async function getTextReply(prompt) {
     // const reply = markdownToText(response.data.choices[0].text)
     console.log('🚀🚀🚀 / reply: ', reply)
   } catch (error) {
-    reply = `Error(${error.response.status}): ${error.response.statusText}` || '';
-    console.log(error.response.data.error.message);
+    reply = error.response ? `Error(${error.response.status}): ${error.response.statusText}` : `Error: ${error || '未知错误'}`;
+    console.log(error.response?.data.error.message);
     console.error(error);
   }
   
