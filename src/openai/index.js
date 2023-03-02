@@ -16,9 +16,9 @@ export async function getTextReply(prompt) {
     console.log('🚀🚀🚀 / prompt: ', prompt)
 
     const response = await openai.createCompletion({
-      model: 'gpt-3.5-turbo', // 'text-davinci-003',
+      model: 'text-davinci-003', // 'text-davinci-003',
       prompt: prompt,
-      temperature: 0.7, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）0.9  
+      temperature: 0.2, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）0.9  
       top_p: 1,
       max_tokens: 1000, // 回复字数限制，越大越慢
       frequency_penalty: 0.0, // 控制主题的重复度[-2.0, 2.0]
