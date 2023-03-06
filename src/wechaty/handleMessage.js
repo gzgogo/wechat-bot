@@ -1,5 +1,5 @@
 import { FileBox }  from 'file-box'
-import { getTextReply, getImageReply } from '../openai/index.js'
+import { getChatReply, getImageReply } from '../openai/index.js'
 import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
 
 const quoteMap = {};
@@ -93,7 +93,7 @@ export async function handleMessage(msg, bot) {
           content = content.replace(`@${botName}`, '');
           content = content.trim();
 
-          let reply = await getTextReply(content) || `抱歉，无法回答您的问题: ${content}`;
+          let reply = await getChatReply(content) || `抱歉，无法回答您的问题: ${content}`;
           await room.say(reply, contact)
         }
      
@@ -122,7 +122,7 @@ export async function handleMessage(msg, bot) {
           //   content = `${quoteMap[alias]} \n${content}`;
           // }
 
-          let reply = await getTextReply(content);
+          let reply = await getChatReply(content);
           if (reply) {
             // quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
           } else {
