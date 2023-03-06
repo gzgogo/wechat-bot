@@ -45,7 +45,7 @@ export async function getChatReply(prompt) {
       // stop: [' Human:', ' AI:'],
     };
 
-    const response = await instance.post('http:/47.254.24.29/v1/chat/completions', data);
+    const response = await instance.post('http://47.254.24.29/v1/chat/completions', data);
     reply = response.data.choices[0].message.content;
 
     // <br/>统一换成\n
