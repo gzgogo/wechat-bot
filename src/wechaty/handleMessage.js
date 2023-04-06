@@ -1,8 +1,8 @@
-import { FileBox }  from 'file-box'
+import { FileBox } from 'file-box'
 import { getChatReply, getImageReply } from '../openai/index.js'
 import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
 
-const quoteMap = {};
+const quoteMap = {}
 
 /**
  * 默认消息发送
@@ -22,16 +22,16 @@ export async function handleMessage(msg, bot) {
   const isText = msg.type() === bot.Message.Type.Text // 消息类型是否为文本
   const isRoom = roomName && (roomWhiteList.includes(roomName) || roomName.startsWith('OpenAI-') || roomName.startsWith('深夜')) // 是否在群聊白名单内
   // const isAlias = (remarkName && aliasWhiteList.includes(remarkName)) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
-  const isAlias = true; // 取消私聊白名单的限制
+  const isAlias = true // 取消私聊白名单的限制
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
-  let isImage = false;
-  let quote = '';
+  let isImage = false
+  let quote = ''
 
   // TODO 你们可以根据自己的需求修改这里的逻辑
   if (isText && !isBotSelf) {
     try {
       /* 注意处理content的顺序不能修改！！！！！ */
-      
+
       // 1. 处理引用
       // 群和私聊的引用格式不一样，需要分开处理
       // 群聊格式：
@@ -41,73 +41,73 @@ export async function handleMessage(msg, bot) {
       // 私聊格式：
       // '「Jarvis：叫张欣？」\n- - - - - - - - - - - - - - -\n是的'
       if (isRoom) {
-        let quoteRegex = /^「[\s\S]*」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/;
+        let quoteRegex = /^「[\s\S]*」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
         if (quoteRegex.test(content)) {
-          let botQuoteRegex = /^「(AI-)?Jarvis：@.* ([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/;
+          let botQuoteRegex = /^「(AI-)?Jarvis：@.* ([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
           if (botQuoteRegex.test(content)) {
-            let quoteMatch = botQuoteRegex.exec(content);
-            quote = quoteMatch[2];
+            let quoteMatch = botQuoteRegex.exec(content)
+            quote = quoteMatch[2]
           }
-          
+
           // 务必在获取quote之后执行，否则content内容被修改导致quote获取失败
-          content = quoteRegex.exec(content)[1];
-        };
+          content = quoteRegex.exec(content)[1]
+        }
       } else if (isAlias) {
-        let quoteRegex = /^「(AI-)?Jarvis：([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/;
+        let quoteRegex = /^「(AI-)?Jarvis：([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
         if (quoteRegex.test(content)) {
-          let quoteMatch = quoteRegex.exec(content);
-          quote = quoteMatch[2];
-          content = quoteMatch[3];
-        };
+          let quoteMatch = quoteRegex.exec(content)
+          quote = quoteMatch[2]
+          content = quoteMatch[3]
+        }
       }
 
       // 2. 判断是否要求返回图片
-      let regex = /^(@(\S*-)?Jarvis\s)?\*\*(.*)$/;
+      let regex = /^(@(\S*-)?Jarvis\s)?\*\*(.*)$/
       if (regex.test(content)) {
-        isImage = true;
-        content = regex.exec(content)[3];
+        isImage = true
+        content = regex.exec(content)[3]
       }
 
       if (quote) {
-        content = `${quote} \n${content}`;
+        content = `${quote} \n${content}`
       }
 
       // 区分群聊和私聊
       // 群聊内引用时不需要@机器人，否则必须@机器人
       if (isRoom && room) {
         if (isImage) {
-          console.log(`\n--- ${name} in ${roomName} (image)`);
+          console.log(`\n--- ${name} in ${roomName} (image)`)
 
-          let reply = await getImageReply(content);
+          let reply = await getImageReply(content)
           if (reply) {
-            await room.say(`"${content}"生成成功，图片正缓缓向您飞来`, contact);
-            await room.say(FileBox.fromUrl(reply));
+            await room.say(`"${content}"生成成功，图片正缓缓向您飞来`, contact)
+            await room.say(FileBox.fromUrl(reply))
           } else {
             await room.say(`抱歉，无法为您生成图片: ${content}`)
           }
         } else if (quote || content.includes(`@${botName}`) || content.includes(`@AI-${botName}`)) {
-          console.log(`\n--- ${name} in ${roomName} (text)`);
+          console.log(`\n--- ${name} in ${roomName} (text)`)
 
           // 去掉@部分
           content = content.replace(`@AI-${botName}`, '')
-          content = content.replace(`@${botName}`, '');
-          content = content.trim();
+          content = content.replace(`@${botName}`, '')
+          content = content.trim()
 
-          let reply = await getChatReply(content) || `抱歉，无法回答您的问题: ${content}`;
+          let reply = (await getChatReply(content)) || `抱歉，无法回答您的问题: ${content}`
           await room.say(reply, contact)
         }
-     
+
         return
       }
       // 私人聊天，白名单内的直接发送
       if (isAlias && !room) {
-        console.log(`\n--- ${name}:`);
-        
+        console.log(`\n--- ${name}:`)
+
         if (isImage) {
-          let reply = await getImageReply(content);
+          let reply = await getImageReply(content)
           if (reply) {
-            await contact.say(`"${content}"生成成功，图片正缓缓向您飞来`);
-            await contact.say(FileBox.fromUrl(reply));
+            await contact.say(`"${content}"生成成功，图片正缓缓向您飞来`)
+            await contact.say(FileBox.fromUrl(reply))
           } else {
             await contact.say(`抱歉，无法为您生成图片: ${content}`)
           }
@@ -122,18 +122,18 @@ export async function handleMessage(msg, bot) {
           //   content = `${quoteMap[alias]} \n${content}`;
           // }
 
-          let reply = await getChatReply(content);
+          let reply = await getChatReply(content)
           if (reply) {
             // quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
           } else {
-            reply = `抱歉，无法回答您的问题: ${text}`;
+            reply = `抱歉，无法回答您的问题: ${text}`
           }
-          
+
           await contact.say(reply)
         }
       }
     } catch (e) {
-      await contact.say(`抱歉，出现异常，请稍后再试或联系@G.z(wx:459135899)`);
+      await contact.say('抱歉，出现异常，请稍后再试')
       console.error(e)
     }
   }
