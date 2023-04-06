@@ -1,9 +1,9 @@
-import { WechatyBuilder, ScanStatus, log } from 'wechaty';
+import { WechatyBuilder, ScanStatus, log } from 'wechaty'
 // import PuppetPadlocal from "wechaty-puppet-padlocal";
-import { FileBox }  from 'file-box';
-import qrTerminal from 'qrcode-terminal';
-import dotenv from 'dotenv';
-import { handleMessage, shardingMessage } from './handleMessage.js';
+import { FileBox } from 'file-box'
+import qrTerminal from 'qrcode-terminal'
+import dotenv from 'dotenv'
+import { handleMessage, shardingMessage } from './handleMessage.js'
 
 const env = dotenv.config().parsed // 环境参数
 
@@ -57,12 +57,12 @@ async function onMessage(msg) {
 
 // 使用企业微信
 const bot = WechatyBuilder.build({
-  name: 'wxwork-jarvis',
+  name: 'wxwork-arnolds',
   puppet: 'wechaty-puppet-service', // WorkPro 是一种 puppet-service ，因此这里应该填写 'wechaty-puppet-service' 而不是 'wechaty-puppet-workpro'
   puppetOptions: {
     // tls: { disable: true },
     token: env.WORK_LOCAL_TOKEN,
-  }
+  },
 })
 
 // // 使用pad协议
@@ -93,12 +93,7 @@ bot.on('message', onMessage)
 // 添加好友
 bot.on('friendship', onFriendShip)
 // 有人加入群时
-bot.on('room-join', (room, inviteeList, inviter) => {
-  inviteeList.forEach(async c => {
-    await room.say('欢迎加入体验群，使用方法请看群公告。为避免失联，请加公众号：jarvis-ai-qy', c)
-    await room.say(FileBox.fromUrl('https://i.328888.xyz/2023/02/24/7Mrkk.md.jpeg'));
-  });
-})
+bot.on('room-join', (room, inviteeList, inviter) => {})
 // 发生错误
 bot.on('error', (error) => {
   console.error(error)
