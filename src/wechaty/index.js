@@ -1,5 +1,5 @@
 import { WechatyBuilder, ScanStatus, log } from 'wechaty';
-import PuppetPadlocal from "wechaty-puppet-padlocal";
+// import PuppetPadlocal from "wechaty-puppet-padlocal";
 import { FileBox }  from 'file-box';
 import qrTerminal from 'qrcode-terminal';
 import dotenv from 'dotenv';

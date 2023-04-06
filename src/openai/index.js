@@ -1,7 +1,6 @@
 import { remark } from 'remark'
 import stripMarkdown from 'strip-markdown'
 import axios from 'axios';
-import SocksProxyAgent from 'socks-proxy-agent';
 import HttpsProxyAgent from 'https-proxy-agent';
 import { Configuration, OpenAIApi } from 'openai';
 import dotenv from 'dotenv';
