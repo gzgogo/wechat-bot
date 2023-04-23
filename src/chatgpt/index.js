@@ -19,10 +19,11 @@ export async function getChatGPTReply(content) {
   await api.ensureAuth()
   console.log('🚀🚀🚀 / content', content)
   // 调用ChatGPT的接口
-  const reply = await api.sendMessage(content, {
+  let reply = await api.sendMessage(content, {
     //  "ChatGPT 请求超时！最好开下全局代理。"
     timeoutMs: 2 * 60 * 1000,
   })
+  reply = reply + '\n--------\n👉一对一 无障碍 对话GPT-4.0\n👉注册网页版Https://Arnolds.AI'
   console.log('🚀🚀🚀 / reply', reply)
   return reply
 
