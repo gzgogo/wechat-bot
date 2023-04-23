@@ -33,14 +33,14 @@ export async function getChatReply(prompt) {
     const data = {
       model: 'gpt-3.5-turbo', // 'text-davinci-003',
       messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'system', content: "You are ChatGPT, a large language model trained by OpenAI. You are powered by GPT-3.5. Please answer in detail." },
         { role: 'user', content: prompt },
       ],
-      temperature: 0.2, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）0.9
+      temperature: 0.8, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）0.9
       top_p: 1,
       max_tokens: 1024, // 回复字数限制，越大越慢
       frequency_penalty: 0.0, // 控制主题的重复度[-2.0, 2.0]
-      presence_penalty: 0.0, // 控制主题的重复度[-2.0, 2.0] 正值会增加新话题的产生机率 default: 0.6
+      presence_penalty: 1, // 控制主题的重复度[-2.0, 2.0] 正值会增加新话题的产生机率 default: 0.6
       // stop: [' Human:', ' AI:'],
     }
 
