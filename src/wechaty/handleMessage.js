@@ -46,6 +46,11 @@ export async function handleMessage(msg, bot) {
           if (isImage) {
             console.log(`\n--- ${name} in ${roomName} (image)`)
 
+            // 去掉@部分
+            content = content.replace(`@AI-${botName}`, '')
+            content = content.replace(`@${botName}`, '')
+            content = content.trim()
+
             let reply = await getImageReply(content)
             if (reply) {
               await room.say(`"${content}"生成成功，图片正缓缓向您飞来`, contact)
