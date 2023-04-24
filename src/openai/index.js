@@ -23,17 +23,20 @@ const instance = axios.create({
 //   // proxy: false
 // });
 
-export async function getChatReply(messages) {
+export async function getChatReply(prompt) {
   let reply = ''
 
   try {
-    console.log('🚀🚀🚀 / prompt: ', messages)
+    console.log('🚀🚀🚀 / prompt: ', prompt)
 
     const data = {
       model: 'gpt-3.5-turbo', // 'text-davinci-003',
       messages: [
-        { role: 'system', content: "You are ChatGPT, a large language model trained by OpenAI. You are powered by GPT-3.5. Please answer in detail." },
-        ...messages
+        {
+          role: 'system',
+          content: 'You are ChatGPT, a large language model trained by OpenAI. You are powered by GPT-3.5. Please answer in detail.',
+        },
+        { role: 'user', content: prompt },
       ],
       temperature: 0.8, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样)
       top_p: 1,
