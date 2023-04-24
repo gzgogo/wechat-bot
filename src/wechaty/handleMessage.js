@@ -2,8 +2,7 @@ import { FileBox } from 'file-box'
 import { getChatReply, getImageReply } from '../openai/index.js'
 import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
 
-// const quoteMap = {}
-const chatHistory = {}
+const quoteMap = {}
 
 /**
  * 默认消息发送
@@ -33,14 +32,48 @@ export async function handleMessage(msg, bot) {
     try {
       /* 注意处理content的顺序不能修改！！！！！ */
 
-      // 判断是否要求返回图片
+      // 1. 处理引用
+      // 群和私聊的引用格式不一样，需要分开处理
+      // 群聊格式：
+      // 群聊时要区分@机器人和其他普通用户，所以要用两个正则
+      // "G.z: @Arnolds wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
+      // '"Arnolds: @G.z <br/><br/>春初登山攀，新年怀抱期待。"<br/>- - - - - - - - - - - - - - -<br/>简短点'
+      // 私聊格式：
+      // '「Arnolds：叫张欣？」\n- - - - - - - - - - - - - - -\n是的'
+      if (isRoom) {
+        let quoteRegex = /^「[\s\S]*」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
+        if (quoteRegex.test(content)) {
+          let botQuoteRegex = /^「(AI-)?Arnolds：@.* ([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
+          if (botQuoteRegex.test(content)) {
+            let quoteMatch = botQuoteRegex.exec(content)
+            quote = quoteMatch[2]
+          }
+
+          // 务必在获取quote之后执行，否则content内容被修改导致quote获取失败
+          content = quoteRegex.exec(content)[1]
+        }
+      } else if (isAlias) {
+        let quoteRegex = /^「(AI-)?Arnolds：([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
+        if (quoteRegex.test(content)) {
+          let quoteMatch = quoteRegex.exec(content)
+          quote = quoteMatch[2]
+          content = quoteMatch[3]
+        }
+      }
+
+      // 2. 判断是否要求返回图片
       let regex = /^(@(\S*-)?Arnolds\s)?\*\*(.*)$/
       if (regex.test(content)) {
         isImage = true
         content = regex.exec(content)[3]
       }
 
+      if (quote) {
+        content = `${quote} \n${content}`
+      }
+
       // 区分群聊和私聊
+      // 群聊内引用时不需要@机器人，否则必须@机器人
       if (isRoom && room) {
         try {
           if (isImage) {
@@ -58,38 +91,15 @@ export async function handleMessage(msg, bot) {
             } else {
               await room.say(`抱歉，无法为您生成图片: ${content}`)
             }
-          } else if (content.includes(`@${botName}`) || content.includes(`@AI-${botName}`)) {
-            console.log(`\n--- ${name} in ${roomName} (content)`)
-
-            if (!Array.isArray(chatHistory[roomName])) {
-              chatHistory[roomName] = []
-            }
+          } else if (quote || content.includes(`@${botName}`) || content.includes(`@AI-${botName}`)) {
+            console.log(`\n--- ${name} in ${roomName} (text)`)
 
             // 去掉@部分
             content = content.replace(`@AI-${botName}`, '')
             content = content.replace(`@${botName}`, '')
             content = content.trim()
 
-            if (content.toLowerCase() === 'clear') {
-              chatHistory[roomName] = []
-              await room.say('上下文已清空')
-              return
-            }
-
-            chatHistory[roomName].push({
-              role: 'user',
-              content: content,
-            })
-
-            let reply = await getChatReply(chatHistory[roomName])
-            if (reply) {
-              chatHistory[roomName].push({
-                role: 'assistant',
-                content: reply,
-              })
-            } else {
-              reply = `抱歉，无法回答您的问题: ${content}`
-            }
+            let reply = (await getChatReply(content)) || `抱歉，无法回答您的问题: ${content}`
             await room.say(`${reply}\n\n👉一对一 无障碍 对话GPT-4.0\n👉注册网页版Https://Arnolds.AI`, contact)
           }
 
@@ -111,29 +121,21 @@ export async function handleMessage(msg, bot) {
             await contact.say(`抱歉，无法为您生成图片: ${content}`)
           }
         } else {
-          if (content.toLowerCase() === 'clear') {
-            chatHistory[name] = []
-            await room.say('上下文已清空')
-            return
-          }
+          // if (content === 'new') {
+          //   quoteMap[alias] = '';
+          //   await contact.say('上下文已清空，开始新的对话');
+          //   return;
+          // }
 
-          if (!Array.isArray(chatHistory[name])) {
-            chatHistory[name] = []
-          }
+          // if (quoteMap[alias]) {
+          //   content = `${quoteMap[alias]} \n${content}`;
+          // }
 
-          chatHistory[name].push({
-            role: 'user',
-            content: content,
-          })
-
-          let reply = await getChatReply(chatHistory[name])
+          let reply = await getChatReply(content)
           if (reply) {
-            chatHistory[name].push({
-              role: 'assistant',
-              content: reply,
-            })
+            // quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
           } else {
-            reply = `抱歉，无法回答您的问题: ${content}`
+            reply = `抱歉，无法回答您的问题: ${text}`
           }
 
           await contact.say(reply)
