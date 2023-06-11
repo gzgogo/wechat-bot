@@ -30,7 +30,7 @@ export async function getChatReply(prompt) {
   try {
     console.log('🚀🚀🚀 / prompt: ', prompt)
 
-    let isSafe = checkTextModeration(prompt)
+    let isSafe = await checkTextModeration(prompt)
     if (!isSafe) {
       return '抱歉，您的输入包含敏感信息，无法回复'
     }
@@ -71,7 +71,7 @@ export async function getChatReply(prompt) {
     console.error(error)
   }
 
-  isSafe = checkTextModeration(reply)
+  isSafe = await checkTextModeration(reply)
   if (!isSafe) {
     return '抱歉，您的输入包含敏感信息，无法回复'
   }
