@@ -62,6 +62,13 @@ export async function getChatReply(prompt) {
     // 去掉开头的非字符内容
     reply = /^[\s,?!*#.。，？！、]*([\s\S]+)/.exec(reply)[1]
 
+    if (reply) {
+      isSafe = await checkTextModeration(reply)
+      if (!isSafe) {
+        return '抱歉，您的输入包含敏感信息，无法回复'
+      }
+    }
+
     // const reply = markdownToText(response.data.choices[0].text)
     console.log('🚀🚀🚀 / reply: ', reply)
   } catch (error) {
@@ -69,11 +76,6 @@ export async function getChatReply(prompt) {
     reply = ''
     console.log(error.response?.data.error.message)
     console.error(error)
-  }
-
-  isSafe = await checkTextModeration(reply)
-  if (!isSafe) {
-    return '抱歉，您的输入包含敏感信息，无法回复'
   }
 
   return reply
