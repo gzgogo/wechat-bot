@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "export WECHATY_PUPPET_SERVICE_NO_TLS_INSECURE_CLIENT=true && export WECHATY_PUPPET_SERVICE_AUTHORITY=token-service-discovery-test.juzibot.com && node ./index.js"
+    "dev": "export WECHATY_PUPPET_SERVICE_NO_TLS_INSECURE_CLIENT=true && export WECHATY_PUPPET_SERVICE_AUTHORITY=token-service-discovery-test.juzibot.com && node ./index.js",
+    "demo": "node ./src/utils/test.js"
   },
   "author": "rongding",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "remark": "^14.0.2",
     "socks-proxy-agent": "^7.0.0",
     "strip-markdown": "^5.0.0",
+    "tencentcloud-sdk-nodejs-tms": "^4.0.617",
     "wechaty": "^1.20.2",
     "wechaty-puppet-padlocal": "^1.20.1",
     "wechaty-puppet-wechat": "^1.18.4"

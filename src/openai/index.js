@@ -4,6 +4,7 @@ import axios from 'axios'
 import HttpsProxyAgent from 'https-proxy-agent'
 import { Configuration, OpenAIApi } from 'openai'
 import dotenv from 'dotenv'
+import { checkTextModeration } from '../utils/checkTextModeration.js'
 
 const env = dotenv.config().parsed // 环境参数
 
@@ -28,6 +29,11 @@ export async function getChatReply(prompt) {
 
   try {
     console.log('🚀🚀🚀 / prompt: ', prompt)
+
+    let isSafe = checkTextModeration(prompt)
+    if (!isSafe) {
+      return '抱歉，您的输入包含敏感信息，无法回复'
+    }
 
     const data = {
       model: 'gpt-3.5-turbo', // 'text-davinci-003',
@@ -63,6 +69,11 @@ export async function getChatReply(prompt) {
     reply = ''
     console.log(error.response?.data.error.message)
     console.error(error)
+  }
+
+  isSafe = checkTextModeration(reply)
+  if (!isSafe) {
+    return '抱歉，您的输入包含敏感信息，无法回复'
   }
 
   return reply
