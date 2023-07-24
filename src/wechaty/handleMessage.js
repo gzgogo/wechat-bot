@@ -100,7 +100,7 @@ export async function handleMessage(msg, bot) {
             content = content.trim()
 
             let reply = (await getChatReply(content)) || `抱歉，无法回答您的问题: ${content}`
-            await room.say(`${reply}\n\n👉一对一|24小时|对话GPT-4.0\n👉私信“阿诺”|注册免梯网页版`, contact)
+            await room.say(`${reply}\n\n👉一对一体验 GPT-3.5/4.0 & Mj-5.2\n👉🚀访问免梯web版 https://Arnolds.CN`, contact)
           }
 
           return
@@ -135,7 +135,7 @@ export async function handleMessage(msg, bot) {
           if (reply) {
             // quoteMap[alias] = `${quoteMap[alias] || ''} \n${reply}`
           } else {
-            reply = `抱歉，无法回答您的问题: ${text}`
+            reply = `抱歉，无法回答您的问题: ${content}`
           }
 
           await contact.say(reply)
