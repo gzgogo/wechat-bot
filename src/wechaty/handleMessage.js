@@ -100,7 +100,7 @@ export async function handleMessage(msg, bot) {
             content = content.trim()
 
             let reply = (await getChatReply(content)) || `抱歉，无法回答您的问题: ${content}`
-            await room.say(`${reply}\n\n👉一对一体验 GPT-3.5/4.0 & Mj-5.2\n👉🚀访问免梯web版 https://Arnolds.CN`, contact)
+            await room.say(`${reply}\n\n👉一对一体验GPT-3.5 & 4.0\n🚀免梯直连 https://Arnolds.CN`, contact)
           }
 
           return
