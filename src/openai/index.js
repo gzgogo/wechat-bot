@@ -72,8 +72,8 @@ export async function getChatReply(prompt) {
     // const reply = markdownToText(response.data.choices[0].text)
     console.log('🚀🚀🚀 / reply: ', reply)
   } catch (error) {
-    // reply = error.response ? `Error(${error.response.status}): ${error.response.statusText}` : `Error: ${error || '未知错误'}`
-    reply = ''
+    reply = error.response ? `Error(${error.response.status}): ${error.response.statusText}` : `Error: ${error || '未知错误'}`
+    // reply = ''
     console.log(error.response?.data.error.message)
     console.error(error)
   }

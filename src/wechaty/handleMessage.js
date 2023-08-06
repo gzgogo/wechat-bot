@@ -1,6 +1,7 @@
 import { FileBox } from 'file-box'
 import { getChatReply, getImageReply } from '../openai/index.js'
 import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
+import { ADConfig, defaultAD } from '../../ad.config.js'
 
 const quoteMap = {}
 
@@ -99,8 +100,10 @@ export async function handleMessage(msg, bot) {
             content = content.replace(`@${botName}`, '')
             content = content.trim()
 
+            const ad = ADConfig[roomName] || defaultAD
+
             let reply = (await getChatReply(content)) || `抱歉，无法回答您的问题: ${content}`
-            await room.say(`${reply}\n\n👉一对一体验GPT-3.5 & 4.0\n🚀免梯直连https://arnolds.cn`, contact)
+            await room.say(`${reply}\n\n${ad ? ad.join('/n') : ''}`, contact)
           }
 
           return
