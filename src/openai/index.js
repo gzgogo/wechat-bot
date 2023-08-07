@@ -9,7 +9,6 @@ import { checkTextModeration } from '../utils/checkTextModeration.js'
 const env = dotenv.config().parsed // 环境参数
 
 const instance = axios.create({
-  // baseURL: 'https://api.openai.com',
   // httpsAgent: new HttpsProxyAgent('http://127.0.0.1:8001'),
   // proxy: false,
   headers: {

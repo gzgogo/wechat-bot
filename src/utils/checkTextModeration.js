@@ -26,7 +26,7 @@ function _checkTextModeration(txtInput) {
   const client = new TmsClient(clientConfig)
   const params = {
     Content: base64, //策略库
-    BizType: 'arnolds_0527',
+    BizType: '',
   }
   let re = client.TextModeration(params).then(
     (data) => {
