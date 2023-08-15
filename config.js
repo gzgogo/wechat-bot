@@ -2,7 +2,7 @@
 export const botName = 'Arnolds'
 
 // 群聊白名单，白名单内的群聊才会自动回复
-export const roomWhiteList = ['Arnolds.AI会员群', 'Arnolds.AI会员群01', 'Arnolds.AI会员群02']
+export const roomWhiteList = ['Arnolds.AI会员群', 'Arnolds.AI会员群01', 'Arnolds.AI会员群02', '鸟叔AI星球']
 
 // 联系人白名单，白名单内的联系人才会自动回复
 export const aliasWhiteList = ['林真实', '赵金海', 'G.z']
