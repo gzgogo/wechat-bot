@@ -103,7 +103,7 @@ export async function handleMessage(msg, bot) {
             const ad = ADConfig[roomName] || defaultAD
 
             let reply = (await getChatReply(content)) || `抱歉，无法回答您的问题: ${content}`
-            await room.say(`${reply}\n\n${ad ? ad.join('\n') : ''}`, contact)
+            await room.say(`${reply}\n\n${Array.isArray(ad) ? ad.join('\n') : ''}`, contact)
           }
 
           return
