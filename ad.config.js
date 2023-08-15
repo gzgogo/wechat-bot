@@ -4,7 +4,7 @@
  *  value: array, 该微信群使用的广告语，每个item占一行
  */
 export const ADConfig = {
-  '“鸟叔AI星球”': ['⚠进群请看看群公告', '👉体验最先进的GPT4.0+绘图', '🚀https://arnolds.cn/?host018'],
+  鸟叔AI星球: ['⚠进群请看看群公告', '👉体验最先进的GPT4.0+绘图', '🚀https://arnolds.cn/?host018'],
 }
 
 /**
