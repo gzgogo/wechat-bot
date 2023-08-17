@@ -64,12 +64,13 @@ export async function handleMessage(msg, bot) {
         }
       }
 
-      // 2. 判断是否要求返回图片
-      let regex = /^(@(\S*-)?Arnolds\s)?\*\*(.*)$/
-      if (regex.test(content)) {
-        isImage = true
-        content = regex.exec(content)[3]
-      }
+      // 取消对图片的支持
+      // // 2. 判断是否要求返回图片
+      // let regex = /^(@(\S*-)?Arnolds\s)?\*\*(.*)$/
+      // if (regex.test(content)) {
+      //   isImage = true
+      //   content = regex.exec(content)[3]
+      // }
 
       if (quote) {
         content = `${quote} \n${content}`
