@@ -37,14 +37,14 @@ export async function handleMessage(msg, bot) {
       // 群和私聊的引用格式不一样，需要分开处理
       // 群聊格式：
       // 群聊时要区分@机器人和其他普通用户，所以要用两个正则
-      // "G.z: @Arnolds wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
-      // '"Arnolds: @G.z <br/><br/>春初登山攀，新年怀抱期待。"<br/>- - - - - - - - - - - - - - -<br/>简短点'
+      // "G.z: @趣跨界智答 wechaty回复群聊时如何@某人"<br/>- - - - - - - - - - - - - - -<br/>这样会如何
+      // '"趣跨界智答: @G.z <br/><br/>春初登山攀，新年怀抱期待。"<br/>- - - - - - - - - - - - - - -<br/>简短点'
       // 私聊格式：
-      // '「Arnolds：叫张欣？」\n- - - - - - - - - - - - - - -\n是的'
+      // '「趣跨界智答：叫张欣？」\n- - - - - - - - - - - - - - -\n是的'
       if (isRoom) {
         let quoteRegex = /^「[\s\S]*」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
         if (quoteRegex.test(content)) {
-          let botQuoteRegex = /^「(AI-)?Arnolds：@.* ([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
+          let botQuoteRegex = /^「(AI-)?趣跨界智答：@.* ([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
           if (botQuoteRegex.test(content)) {
             let quoteMatch = botQuoteRegex.exec(content)
             quote = quoteMatch[2]
@@ -54,7 +54,7 @@ export async function handleMessage(msg, bot) {
           content = quoteRegex.exec(content)[1]
         }
       } else if (isAlias) {
-        let quoteRegex = /^「(AI-)?Arnolds：([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
+        let quoteRegex = /^「(AI-)?趣跨界智答：([\s\S]*)」\n- - - - - - - - - - - - - - -\n([\s\S]*)$/
         if (quoteRegex.test(content)) {
           let quoteMatch = quoteRegex.exec(content)
           quote = quoteMatch[2]
@@ -62,12 +62,13 @@ export async function handleMessage(msg, bot) {
         }
       }
 
-      // 2. 判断是否要求返回图片
-      let regex = /^(@(\S*-)?Arnolds\s)?\*\*(.*)$/
-      if (regex.test(content)) {
-        isImage = true
-        content = regex.exec(content)[3]
-      }
+      // 取消对图片的支持
+      // // 2. 判断是否要求返回图片
+      // let regex = /^(@(\S*-)?趣跨界智答\s)?\*\*(.*)$/
+      // if (regex.test(content)) {
+      //   isImage = true
+      //   content = regex.exec(content)[3]
+      // }
 
       if (quote) {
         content = `${quote} \n${content}`
