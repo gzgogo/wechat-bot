@@ -7,7 +7,7 @@ export const ADConfig = {
   '鸟叔AI星球 X 育儿': ['⚠进群请看看群公告', '👉体验最先进的GPT4.0+绘图', '🚀https://arnolds.cn/?host018'],
   '鸟叔AI星球 X 人工智能初体验': ['⚠进群请看看群公告', '👉体验最先进的GPT4.0+绘图', '🚀https://arnolds.cn/?host018'],
   '鸟叔AI星球 X 医学交流': ['⚠进群请看看群公告', '👉体验最先进的GPT4.0+绘图', '🚀https://arnolds.cn/?host018'],
-  鸟叔AI星球X职场与人生: ['⚠进群请看看群公告', '👉体验最先进的GPT4.0+绘图', '🚀https://arnolds.cn/?host018'],
+  '鸟叔AI星球 X 职场与人生': ['⚠进群请看看群公告', '👉体验最先进的GPT4.0+绘图', '🚀https://arnolds.cn/?host018'],
 }
 
 /**
